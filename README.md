@@ -57,4 +57,3 @@ App ke **Settings** screen mein apna backend server ka URL daalna hoga
 (jaise `http://192.168.1.10:8000` local network par, ya public URL agar
 server internet par expose kiya hai). Login: `.env` mein set kiya gaya
 `MONITOR_USERNAME` / `MONITOR_PASSWORD`.
-
