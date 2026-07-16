@@ -1,42 +1,31 @@
 name: Build APK
 
-# Yeh workflow GitHub ke free cloud runners par chalta hai - koi bhi
-# Flutter install karne ki zaroorat nahi. Bas is repo ko GitHub par push
-# karo (ya web UI se upload karo), yeh khud-ba-khud APK bana dega.
-
 on:
   push:
     branches: [ main, master ]
-  workflow_dispatch:   # "Actions" tab se manually bhi chala sakte ho
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
-          channel: 'stable'
+          flutter-version: "3.24.0"
 
-      - name: Generate native Android project files
-        # Is repo mein sirf lib/ + pubspec.yaml hai - android/ folder
-        # (Gradle, AndroidManifest, etc.) yahan generate hota hai.
-        # Existing lib/ files ko yeh touch nahi karta.
-        run: flutter create --platforms=android .
+      - run: flutter create .
 
-      - name: Install dependencies
-        run: flutter pub get
+      - run: flutter pub get
 
-      - name: Build release APK
-        run: flutter build apk --release
+      - run: |
+          sed -i 's/org.jetbrains.kotlin.android/org.jetbrains.kotlin.android version "2.0.21"/' android/settings.gradle || true
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - run: flutter build apk --release
+
+      - uses: actions/upload-artifact@v4
         with:
-          name: deltabot-monitor-apk
+          name: app-release
           path: build/app/outputs/flutter-apk/app-release.apk
